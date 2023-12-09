@@ -1,0 +1,11 @@
+/cmake-build-*/
+/data/
+/g4/
+/geant4/
+exp
+/_skbuild/
+/build/
+*.egg-info/
+/.idea/
+/venv/
+/tmp/
