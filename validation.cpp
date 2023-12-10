@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     opmc::G4Run g4Run(seeds, G4DATASET_DIR);
     g4Run.initializeWater(32, 32, 32, 1.);
     g4Run.initializeGeometry();
-    auto result = g4Run.Run("e-", {0.5, 0.5, 0.001}, {0, 0, 1}, 6 * CLHEP::MeV, static_cast<int>(10e5));
+    auto result = g4Run.Run("e-", {0.5, 0.5, 0.001}, {0, 0, 1}, 6 * CLHEP::MeV, static_cast<int>(10000));
 //    auto result2 = g4Run.Run("e-", {1.5, 1.5, 0.001}, {0, 0, 1}, 6 * CLHEP::MeV, static_cast<int>(10e2));
     auto doseDepthDistribution = result.doseDepthDistribution();
 //    auto doseDepthDistribution2 = result2.doseDepthDistribution();
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     auto referenceMaterial = tables->referenceMaterial();
     auto electronData = tables->getElectronData();
     auto photonData = tables->getPhotonData();
-    DPMRrun.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, 10e5);
+    DPMRrun.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, 10000);
 
     auto dpmDoseDepthDistribution = voxelMap.doseDepthDistribution();
 

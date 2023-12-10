@@ -321,8 +321,6 @@ namespace opmc {
                                        DoseDistribution<> opmc_distribution) {
         reference_distribution.filter(.20);
         opmc_distribution.filter(.20);
-        reference_distribution.normalize();
-        opmc_distribution.normalize();
         const auto [dimx, dimy, dimz] = reference_distribution.dimensions();
         const auto [sizex, sizey, sizez] = reference_distribution.voxelSize();
         auto gamma = calculateGamma(0, 3, reference_distribution.data(), opmc_distribution.data(),
@@ -332,7 +330,7 @@ namespace opmc {
                                     sizex*.5, sizex, dimx,
                                     sizey*.5, sizey, dimy,
                                     sizez*.5, sizez, dimz,
-                                    2, 2, true, -1, 100);
+                                    1, 1, true, -1, 100);
         std::experimental::mdspan gamma_span(gamma, dimx, dimy, dimz);
         // iterate over the 3d mdspan and find the index of minimum gamma
         auto min_gamma = std::numeric_limits<double>::max();

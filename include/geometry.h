@@ -115,10 +115,8 @@ namespace opmc {
                                        const ThreeVector<real_type> &resolution, const std::vector<Material> &materials)
                 : m_dimensions(dimensions),
                   m_doses(dimensions.x * dimensions.y * dimensions.z),
-                  m_tracks(dimensions.x * dimensions.y * dimensions.z),
                   m_materials(dimensions.x * dimensions.y * dimensions.z),
                   m_doses_span{m_doses.data(), DYNAMIC_3D_EXTENDS(dimensions.x, dimensions.y, dimensions.z)},
-                  m_tracks_span{m_tracks.data(), DYNAMIC_3D_EXTENDS(dimensions.x, dimensions.y, dimensions.z)},
                   m_materials_span{m_materials.data(), DYNAMIC_3D_EXTENDS(dimensions.x, dimensions.y, dimensions.z)},
                   m_resolution(resolution),
                   m_inverse_resolution(ThreeVector{1., 1., 1.} / resolution),
@@ -127,7 +125,6 @@ namespace opmc {
                   m_material_list(materials) {
             for (auto i = 0ULL; i < dimensions.x * dimensions.y * dimensions.z; ++i) {
                 m_doses[i] = 0;
-                m_tracks[i] = 0;
                 m_materials[i] = 0;
             }
         }
@@ -144,15 +141,14 @@ namespace opmc {
         ODPM_INLINE constexpr absl::optional<CONTAINED_T> operator[](const ThreeVector<T> &i) noexcept {
             const auto position = getPosition(i);
             if (ODPM_LIKELY(rangeCheck(position))) {
-                return CONTAINED_T{accessSpan(m_doses_span, position), accessSpan(m_tracks_span, position),
-                                   getMaterial(position)};
+                return CONTAINED_T{accessSpan(m_doses_span, position), getMaterial(position)};
             }
             return absl::nullopt;
         }
 
         ODPM_INLINE constexpr long numElements() const noexcept { return m_doses_span.size(); }
 
-        ODPM_INLINE constexpr float *origin_dose() const noexcept { return m_doses_span.data_handle(); }
+        ODPM_INLINE constexpr double *origin_dose() const noexcept { return m_doses_span.data_handle(); }
 
         ODPM_INLINE constexpr std::uint8_t *origin_material() const noexcept { return m_materials_span.data_handle(); }
 
@@ -219,7 +215,6 @@ namespace opmc {
             for (auto i = 0LL; i < numElements(); ++i) {
                 m_materials[i] = geometry.m_materials[i];
                 m_doses[i] = 0;
-                m_tracks[i] = 0;
             }
         }
 
@@ -237,15 +232,25 @@ namespace opmc {
             return m_resolution;
         }
 
+        ODPM_INLINE constexpr void toGray() {
+            constexpr auto gray_factor = 1. / 6241509343260.2;
+            constexpr auto to_kg_mm3 = [](const Material &material) {
+                return material.mass_density() * 1e-6;
+            };
+            const auto volume = m_resolution.x * m_resolution.y * m_resolution.z;
+            for (auto i = 0ULL; i < m_doses.size(); ++i) {
+                const auto &material = m_material_list[m_materials[i]];
+                m_doses[i] *= gray_factor / (to_kg_mm3(material) * volume);
+            }
+        }
+
     protected:
         ThreeVector<unsigned long> m_dimensions;
 
-        std::vector<float> m_doses;
-        std::vector<int> m_tracks;
+        std::vector<double> m_doses;
         std::vector<std::uint8_t> m_materials;
 
-        MDSPAN_TYPE<float> m_doses_span;
-        MDSPAN_TYPE<int> m_tracks_span;
+        MDSPAN_TYPE<double> m_doses_span;
         MDSPAN_TYPE <std::uint8_t> m_materials_span;
 
         ThreeVector<real_type> m_resolution;
@@ -313,8 +318,7 @@ namespace opmc {
         ODPM_INLINE constexpr absl::optional<CONTAINED_T> operator[](const ThreeVector<T> &i) noexcept {
             const auto position = static_cast<ThreeVector<int>>(getPosition(i));
             if (ODPM_LIKELY(rangeCheck(position))) {
-                return CONTAINED_T{accessSpan(m_doses_span, position), accessSpan(m_tracks_span, position),
-                                   getMaterial(position)};
+                return CONTAINED_T{accessSpan(m_doses_span, position), getMaterial(position)};
             }
             return absl::nullopt;
         }

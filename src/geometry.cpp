@@ -23,10 +23,6 @@ namespace opmc {
                 }
             }
         }
-        real_type norm = 1. / *max_element(histogram.begin(), histogram.end());
-        for (auto &item: histogram) {
-            item *= norm;
-        }
         return histogram;
     }
 

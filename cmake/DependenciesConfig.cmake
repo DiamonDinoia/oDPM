@@ -80,8 +80,8 @@ endforeach ()
 
 CPMAddPackage(
         NAME geant4
-        GIT_REPOSITORY ssh://git@gitlab.cern.ch:7999/ahoward/geant4-dev.git
-        GIT_TAG DICOM-V11-01-02
+        GIT_REPOSITORY https://github.com/Geant4/geant4.git
+        GIT_TAG v11.2.0
         GIT_SHALLOW YES
         GIT_PROGRESS YES
         EXCLUDE_FROM_ALL YES
@@ -109,7 +109,7 @@ CPMAddPackage(
 
 CPMAddPackage(
         NAME mixmax
-        GIT_REPOSITORY git@github.com:DiamonDinoia/mixmaxCUDA.git
+        GIT_REPOSITORY https://github.com/DiamonDinoia/mixmaxCUDA.git
         GIT_TAG main
         GIT_PROGRESS YES
         GIT_SHALLOW YES

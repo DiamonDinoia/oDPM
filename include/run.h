@@ -81,6 +81,7 @@ shared(chunks, geometry, referenceMaterial, photon_data, electron_data, std::cou
                     }
                 }
             }
+            geometry.toGray();
             auto end = std::chrono::steady_clock::now();
             std::chrono::duration<double, std::milli> timeRequired = (end - start);
             std::cout << "Monte Carlo Simulation required " << timeRequired.count() << " milliseconds" << std::endl;

@@ -77,6 +77,6 @@ NB_MODULE(pyodpm_ext, m) {
           });
     m.def("toNdArray", [](opmc::HalfDistanceVoxelCube &a) {
         size_t shape[3] = {a.dimension().x, a.dimension().y, a.dimension().z};
-        return nb::ndarray<nb::numpy, const float, nb::shape<3, nb::any>>(a.origin_dose(), 3, shape);
+        return nb::ndarray<nb::numpy, const double, nb::shape<3, nb::any>>(a.origin_dose(), 3, shape);
     });
 }
