@@ -6,6 +6,9 @@
 #include <G4PhysicalVolumeStore.hh>
 #include <G4LogicalVolumeStore.hh>
 #include <G4SolidStore.hh>
+#include <FTFP_BERT.hh>
+#include <G4EmStandardPhysicsSS.hh>
+#include <G4EmStandardPhysics_option4.hh>
 
 #include "DPMG4Run.h"
 #include "DicomRun.hh"
@@ -14,13 +17,23 @@
 
 namespace opmc {
 
-    G4Run::G4Run(const std::array<G4long, 2> &seeds, const std::string &gDataDirEnvVar) {
+G4Run::G4Run(const std::array<G4long, 2> &seeds, const std::string &gDataDirEnvVar, const std::string& physListName) {
         initializeEnvironment(gDataDirEnvVar);
         CLHEP::HepRandom::setTheEngine(new CLHEP::MixMaxRng);
         CLHEP::HepRandom::setTheSeeds(seeds.data());
         runManager = std::unique_ptr<G4RunManager>(G4RunManagerFactory::CreateRunManager());
         runManager->SetNumberOfThreads(static_cast<G4int>(std::thread::hardware_concurrency()));
-        phys = new Shielding();
+        if (physListName == "Shielding") {
+            phys = new Shielding();
+        } else if (physListName == "FTFP_BERT") {
+            phys = new FTFP_BERT();
+            phys->ReplacePhysics(new G4EmStandardPhysicsSS());
+        } else if (physListName == "FTFP_BERT_Fast") {
+            phys = new FTFP_BERT();
+            phys->ReplacePhysics(new G4EmStandardPhysics_option4());
+        } else {
+            G4Exception("G4Run", "001", FatalException, "Physics List not found!!!");
+        }
         runManager->SetUserInitialization(phys);
     }
 
@@ -43,7 +56,10 @@ namespace opmc {
         runManager->SetUserInitialization(theGeometry);
         ThreeVector<real_type> voxelSize{theGeometry->GetVoxelHalfX(), theGeometry->GetVoxelHalfY(),
                                          theGeometry->GetVoxelHalfZ()};
-        phys->SetDefaultCutValue(voxelSize.min());
+        phys->SetCutValue(voxelSize.min() * .2, "gamma");
+        phys->SetCutValue(voxelSize.min() * .2, "e-");
+        phys->SetCutValue(voxelSize.min() * .2, "e+");
+        phys->SetCutValue(voxelSize.min() * .2, "proton");
     }
 
     HalfDistanceVoxelCube G4Run::Run(const std::string &particle, const ThreeVector<double> &pos,
@@ -86,7 +102,7 @@ namespace opmc {
         std::cout << "end = " << end << std::endl;
         std::cout << "Z = " << theGeometry->GetNoVoxelsZ() << std::endl;
 
-        HalfDistanceVoxelCube G4doses{dim, voxelSize, std::vector<Material>{}};
+        VoxelCube G4doses{dim, voxelSize, std::vector<Material>{}};
         std::copy(doses.begin(), doses.end(), G4doses.origin_dose());
 
         return G4doses;
@@ -99,5 +115,6 @@ namespace opmc {
     const DPMTables<G4String>* G4Run::getTables() const {
         return tables.get();
     }
+    ThreeVector<double> G4Run::center() const { return getCenter(*theGeometry); }
 
-}
+    }

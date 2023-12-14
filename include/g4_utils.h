@@ -143,6 +143,8 @@ namespace opmc {
 
     GammaResults validateDistributions(DoseDistribution<> reference_distribution,
                                        DoseDistribution<> opmc_distribution);
+
+    ThreeVector<real_type> getCenter(const OpmcDicomDetectorConstruction &theGeometry);
 }
 
 
