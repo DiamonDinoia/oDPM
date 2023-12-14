@@ -250,7 +250,7 @@ namespace opmc {
         }
     }
 
-    HalfDistanceVoxelCube convertGeometryToVoxelCube(OpmcDicomDetectorConstruction &theGeometry,
+    VoxelCube convertGeometryToVoxelCube(OpmcDicomDetectorConstruction &theGeometry,
                                                      ODPMDicomFileMgr &theFileMgr,
                                                      std::unique_ptr<DPMTables<G4String>> &tables) {
 
@@ -311,7 +311,7 @@ namespace opmc {
         for (auto &v: voxels) {
             v = materialMap[v];
         }
-        HalfDistanceVoxelCube G4doses{dim, voxelSize, tables->DPMmaterials()};
+        VoxelCube G4doses{dim, voxelSize, tables->DPMmaterials()};
         std::copy(voxels.begin(), voxels.end(), G4doses.origin_material());
         return G4doses;
     }
@@ -376,5 +376,24 @@ namespace opmc {
            << results.averageRelativeError << " gammaPassingRate: " << results.gammaPassingRate << " minGamma: "
            << results.minGamma;
         return os;
+    }
+
+    ThreeVector<real_type> getCenter(const OpmcDicomDetectorConstruction &theGeometry){
+        ThreeVector<real_type> dim{theGeometry.GetNoVoxelsX(), theGeometry.GetNoVoxelsY(), theGeometry.GetNoVoxelsZ()};
+        ThreeVector<real_type> voxelSize{theGeometry.GetVoxelHalfX() * 2, theGeometry.GetVoxelHalfY() * 2,
+                                         theGeometry.GetVoxelHalfZ() * 2};
+        ThreeVector<real_type> origin{theGeometry.GetMinX(), theGeometry.GetMinY(), theGeometry.GetMinZ()};
+        ThreeVector<real_type> end{theGeometry.GetMaxX(), theGeometry.GetMaxY(), theGeometry.GetMaxZ()};
+
+        std::cout << "dim = " << dim << std::endl;
+        std::cout << "voxelSize = " << voxelSize << std::endl;
+        std::cout << "origin = " << origin << std::endl;
+        std::cout << "end = " << end << std::endl;
+        std::cout << "Z = " << theGeometry.GetNoVoxelsZ() << std::endl;
+
+        auto center = dim-end;
+        center.z    = std::abs(origin.z);
+        std::cout << "center = " << center << std::endl;
+        return center;
     }
 }

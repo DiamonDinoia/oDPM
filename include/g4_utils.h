@@ -128,7 +128,7 @@ namespace opmc {
         G4double fDimVox;
     };
 
-    HalfDistanceVoxelCube convertGeometryToVoxelCube(OpmcDicomDetectorConstruction &theGeometry,
+    VoxelCube convertGeometryToVoxelCube(OpmcDicomDetectorConstruction &theGeometry,
                                                      ODPMDicomFileMgr &theFileMgr,
                                                      std::unique_ptr<DPMTables<G4String>> &tables);
 

@@ -21,7 +21,7 @@ class G4Run {
     G4Run(const std::array<G4long, 2> &seeds, const std::string &gDataDirEnvVar,
           const std::string &physListName = "Shielding");
 
-    HalfDistanceVoxelCube Run(const std::string &particle, const ThreeVector<double> &position,
+    VoxelCube Run(const std::string &particle, const ThreeVector<double> &position,
                               const ThreeVector<double> &direction, const double energy, const std::int32_t histories);
 
     void initializeDicom(const std::string &filename, const int nFiles);
@@ -31,7 +31,7 @@ class G4Run {
 
     void initializeGeometry();
 
-    HalfDistanceVoxelCube convertGeometry();
+    VoxelCube convertGeometry();
 
     const DPMTables<G4String> *getTables() const;
 

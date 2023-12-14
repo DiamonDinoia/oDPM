@@ -37,17 +37,17 @@ NB_MODULE(pyodpm_ext, m) {
         .def("initializeGeometry", &OPMCG4Run::initializeGeometry)
         .def("convertGeometry", &OPMCG4Run::convertGeometry)
         .def("center", &OPMCG4Run::center);
-    nb::class_<opmc::HalfDistanceVoxelCube>(m, "HalfDistanceVoxelCube")
-        .def("doseDepthDistribution", &opmc::HalfDistanceVoxelCube::doseDepthDistribution)
-        .def("doseDistribution", &opmc::HalfDistanceVoxelCube::doseDistribution)
-        .def("resolution", &opmc::HalfDistanceVoxelCube::resolution);
+    nb::class_<opmc::VoxelCube>(m, "VoxelCube")
+        .def("doseDepthDistribution", &opmc::VoxelCube::doseDepthDistribution)
+        .def("doseDistribution", &opmc::VoxelCube::doseDistribution)
+        .def("resolution", &opmc::VoxelCube::resolution);
     nb::class_<opmc::ElectronPencilBeam>(m, "ElectronPencilBeam")
         .def(nb::init<opmc::ThreeVector<double>, opmc::ThreeVector<double>, double>());
     nb::class_<opmc::PhotonPencilBeam>(m, "PhotonPencilBeam")
         .def(nb::init<opmc::ThreeVector<double>, opmc::ThreeVector<double>, double>());
-    nb::class_<opmc::Run<opmc::HalfDistanceVoxelCube>>(m, "Run").def(nb::init<std::uint64_t>());
+    nb::class_<opmc::Run<opmc::VoxelCube>>(m, "Run").def(nb::init<std::uint64_t>());
     m.def("simulate",
-          [](opmc::Run<opmc::HalfDistanceVoxelCube> &run, const OPMCG4Run &g4Run, opmc::HalfDistanceVoxelCube &voxelMap,
+          [](opmc::Run<opmc::VoxelCube> &run, const OPMCG4Run &g4Run, opmc::VoxelCube &voxelMap,
              opmc::ElectronPencilBeam &beam, const std::int32_t histories) {
               const auto tables      = g4Run.getTables();
               auto referenceMaterial = tables->referenceMaterial();
@@ -56,7 +56,7 @@ NB_MODULE(pyodpm_ext, m) {
               run.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, histories);
           });
     m.def("simulate",
-          [](opmc::Run<opmc::HalfDistanceVoxelCube> &run, const OPMCG4Run &g4Run, opmc::HalfDistanceVoxelCube &voxelMap,
+          [](opmc::Run<opmc::VoxelCube> &run, const OPMCG4Run &g4Run, opmc::VoxelCube &voxelMap,
              opmc::PhotonPencilBeam &beam, const std::int32_t histories) {
               const auto tables      = g4Run.getTables();
               auto referenceMaterial = tables->referenceMaterial();
@@ -64,12 +64,12 @@ NB_MODULE(pyodpm_ext, m) {
               auto photonData        = tables->getPhotonData();
               run.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, histories);
           });
-    m.def("validate", [](opmc::HalfDistanceVoxelCube &a, opmc::HalfDistanceVoxelCube &b) {
+    m.def("validate", [](opmc::VoxelCube &a, opmc::VoxelCube &b) {
         const auto gamma = opmc::validateDistributions(a.doseDistribution(), b.doseDistribution());
         return std::make_tuple(gamma.maxRelativeError, gamma.averageRelativeError, gamma.gammaPassingRate,
                                gamma.minGamma);
     });
-    m.def("toNdArray", [](opmc::HalfDistanceVoxelCube &a) {
+    m.def("toNdArray", [](opmc::VoxelCube &a) {
         size_t shape[3] = {a.dimension().x, a.dimension().y, a.dimension().z};
         return nb::ndarray<nb::numpy, const double, nb::shape<3, nb::any>>(a.origin_dose(), 3, shape);
     });

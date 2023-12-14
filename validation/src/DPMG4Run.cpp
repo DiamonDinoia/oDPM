@@ -62,14 +62,13 @@ G4Run::G4Run(const std::array<G4long, 2> &seeds, const std::string &gDataDirEnvV
         phys->SetCutValue(voxelSize.min() * .2, "proton");
     }
 
-    HalfDistanceVoxelCube G4Run::Run(const std::string &particle, const ThreeVector<double> &pos,
+    VoxelCube G4Run::Run(const std::string &particle, const ThreeVector<double> &pos,
                                      const ThreeVector<double> &dir, const double energy,
                                      const std::int32_t histories) {
         runManager->SetUserInitialization(
                 new OpmcDicomActionInitialization(particle, {pos.x, pos.y, pos.z}, {dir.x, dir.y, dir.z}, energy));
         runManager->Initialize();
         runManager->BeamOn(histories);
-
         auto &run = *dynamic_cast<const DicomRun *>(runManager->GetNonConstCurrentRun());
         auto &runAction = *dynamic_cast<const ODPMDicomRunAction *>(G4RunManager::GetRunManager()->GetUserRunAction());
         const auto id = runAction.GetDicomRun()->GetRunID();
@@ -78,6 +77,7 @@ G4Run::G4Run(const std::array<G4long, 2> &seeds, const std::string &gDataDirEnvV
         std::vector<double> doses(totalVoxels, 0);
         doses.reserve(totalVoxels);
         const auto hitsMaps = run.GetNumberOfHitsMap();
+        std::cout << "hitsMaps = " << hitsMaps << std::endl;
         for (auto i = 0; i < hitsMaps; ++i) {
             auto &doseDeposit = *run.GetHitsMap(i)->GetMap();
             for (auto [index, dose]: doseDeposit) {
@@ -108,7 +108,7 @@ G4Run::G4Run(const std::array<G4long, 2> &seeds, const std::string &gDataDirEnvV
         return G4doses;
     }
 
-    HalfDistanceVoxelCube G4Run::convertGeometry() {
+    VoxelCube G4Run::convertGeometry() {
         return convertGeometryToVoxelCube(*theGeometry, theFileMgr, tables);
     }
 
