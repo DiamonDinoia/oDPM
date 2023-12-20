@@ -15,9 +15,12 @@
 
 #define ODPM_INLINE inline __attribute__((always_inline))
 #define ODPM_NOINLINE __attribute__((noinline))
-#define ODPM_CONST  __attribute__((const))
+#define ODPM_CONST __attribute__((const))
 #define ODPM_CONSTEXPR constexpr
 #define ODPM_PURE __attribute__((pure))
 #define ODPM_UNREACHABLE __builtin_unreachable()
-#define ODPM_ASSUME(expr) do { if (!(expr)) __builtin_unreachable(); } while (0)
+#define ODPM_ASSUME(expr)                     \
+    do {                                      \
+        if (!(expr)) __builtin_unreachable(); \
+    } while (0)
 #endif  // ODPM_CPU_INCLUDE_UTILS_H_

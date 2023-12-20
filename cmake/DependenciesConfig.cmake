@@ -5,6 +5,15 @@ if(CCACHE_PROGRAM)
     set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
 endif()
 
+set(MOLD_PROGRAM mold)
+if (WIN32)
+    set(MOLD_PROGRAM mold.exe)
+endif ()
+
+find_program(MOLD_PROGRAM ${MOLD_PROGRAM})
+if(MOLD_PROGRAM)
+    set(CMAKE_LINKER_TYPE MOLD)
+endif ()
 
 CPMAddPackage(
         NAME mdspan

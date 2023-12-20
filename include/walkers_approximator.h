@@ -6,9 +6,10 @@
 #ifndef ODPM_CPU_INCLUDE_WALKERS_APPROXIMATOR_H_
 #define ODPM_CPU_INCLUDE_WALKERS_APPROXIMATOR_H_
 
+#include <absl/container/inlined_vector.h>
+
 #include <ostream>
 
-#include <absl/container/inlined_vector.h>
 #include "constants.h"
 #include "types.h"
 

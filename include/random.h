@@ -9,52 +9,42 @@
 
 #include <random>
 
-
 #include "types.h"
 
 namespace opmc {
 
-    class Random {
-    public:
+class Random {
+   public:
+    explicit Random(unsigned long seed) : m_rng(seed) {}
 
-        explicit Random(unsigned long seed) : m_rng(seed) {}
+    explicit Random(unsigned long seed, unsigned long stream) : m_rng(seed, stream) {}
 
+    explicit Random(unsigned int seed0, unsigned int seed1, unsigned int seed2, unsigned int seed3)
+        : m_rng(seed0, seed1, seed2, seed3) {}
 
-        explicit Random(unsigned long seed, unsigned long stream) : m_rng(seed, stream) {}
+    Random(const Random &)            = default;
 
+    Random(Random &&)                 = default;
 
-        explicit Random(unsigned int seed0, unsigned int seed1, unsigned int seed2, unsigned int seed3)
-                : m_rng(seed0, seed1, seed2, seed3) {}
+    Random &operator=(const Random &) = default;
 
+    Random &operator=(Random &&)      = default;
 
-        Random(const Random &) = default;
+    ODPM_INLINE constexpr real_type getUniform() noexcept { return m_rng.Uniform(); }
 
-
-        Random(Random &&) = default;
-
-
-        Random &operator=(const Random &) = default;
-
-
-        Random &operator=(Random &&) = default;
-
-
-        ODPM_INLINE constexpr real_type getUniform() noexcept { return m_rng.Uniform(); }
-
-
-        ODPM_INLINE constexpr real_type getExponential() noexcept { return -math::faster_logf(m_rng.Uniform()); }
+    ODPM_INLINE constexpr real_type getExponential() noexcept { return -math::faster_logf(m_rng.Uniform()); }
 
 #ifndef __CUDA_ARCH__
 
-        inline real_type getSampled(std::uniform_real_distribution<real_type> &sampled) { return sampled(m_rng); }
+    inline real_type getSampled(std::uniform_real_distribution<real_type> &sampled) { return sampled(m_rng); }
 
-        inline unsigned getSampled(std::uniform_int_distribution<unsigned> &sampled) { return sampled(m_rng); }
+    inline unsigned getSampled(std::uniform_int_distribution<unsigned> &sampled) { return sampled(m_rng); }
 
 #endif
 
-    private:
-        MIXMAX::MixMaxRng17 m_rng;
-    };
+   private:
+    MIXMAX::MixMaxRng17 m_rng;
+};
 
 }  // namespace opmc
 

@@ -111,7 +111,7 @@ class Material {
 
     // MollerIMFPScaling
     const real_type m_MollerIMFPScaling;
-    const real_type m_density; //[g/cm3]
+    const real_type m_density;  //[g/cm3]
 
     // Electron data
 

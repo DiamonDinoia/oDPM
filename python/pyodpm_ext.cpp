@@ -34,7 +34,6 @@ NB_MODULE(pyodpm_ext, m) {
         .def("Run", &OPMCG4Run::Run)
         .def("initializeDicom", &OPMCG4Run::initializeDicom)
         .def("initializeWater", &OPMCG4Run::initializeWater)
-        .def("initializeGeometry", &OPMCG4Run::initializeGeometry)
         .def("convertGeometry", &OPMCG4Run::convertGeometry)
         .def("center", &OPMCG4Run::center);
     nb::class_<opmc::VoxelCube>(m, "VoxelCube")
@@ -46,24 +45,22 @@ NB_MODULE(pyodpm_ext, m) {
     nb::class_<opmc::PhotonPencilBeam>(m, "PhotonPencilBeam")
         .def(nb::init<opmc::ThreeVector<double>, opmc::ThreeVector<double>, double>());
     nb::class_<opmc::Run<opmc::VoxelCube>>(m, "Run").def(nb::init<std::uint64_t>());
-    m.def("simulate",
-          [](opmc::Run<opmc::VoxelCube> &run, const OPMCG4Run &g4Run, opmc::VoxelCube &voxelMap,
-             opmc::ElectronPencilBeam &beam, const std::int32_t histories) {
-              const auto tables      = g4Run.getTables();
-              auto referenceMaterial = tables->referenceMaterial();
-              auto electronData      = tables->getElectronData();
-              auto photonData        = tables->getPhotonData();
-              run.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, histories);
-          });
-    m.def("simulate",
-          [](opmc::Run<opmc::VoxelCube> &run, const OPMCG4Run &g4Run, opmc::VoxelCube &voxelMap,
-             opmc::PhotonPencilBeam &beam, const std::int32_t histories) {
-              const auto tables      = g4Run.getTables();
-              auto referenceMaterial = tables->referenceMaterial();
-              auto electronData      = tables->getElectronData();
-              auto photonData        = tables->getPhotonData();
-              run.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, histories);
-          });
+    m.def("simulate", [](opmc::Run<opmc::VoxelCube> &run, const OPMCG4Run &g4Run, opmc::VoxelCube &voxelMap,
+                         opmc::ElectronPencilBeam &beam, const std::int32_t histories) {
+        const auto tables      = g4Run.getTables();
+        auto referenceMaterial = tables->referenceMaterial();
+        auto electronData      = tables->getElectronData();
+        auto photonData        = tables->getPhotonData();
+        run.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, histories);
+    });
+    m.def("simulate", [](opmc::Run<opmc::VoxelCube> &run, const OPMCG4Run &g4Run, opmc::VoxelCube &voxelMap,
+                         opmc::PhotonPencilBeam &beam, const std::int32_t histories) {
+        const auto tables      = g4Run.getTables();
+        auto referenceMaterial = tables->referenceMaterial();
+        auto electronData      = tables->getElectronData();
+        auto photonData        = tables->getPhotonData();
+        run.simulate(voxelMap, beam, referenceMaterial, electronData, photonData, histories);
+    });
     m.def("validate", [](opmc::VoxelCube &a, opmc::VoxelCube &b) {
         const auto gamma = opmc::validateDistributions(a.doseDistribution(), b.doseDistribution());
         return std::make_tuple(gamma.maxRelativeError, gamma.averageRelativeError, gamma.gammaPassingRate,

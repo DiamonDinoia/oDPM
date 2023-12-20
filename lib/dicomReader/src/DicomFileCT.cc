@@ -25,14 +25,14 @@
 //
 #include "DicomFileCT.hh"
 
-std::vector<G4int> DicomFileCT::GetMaterislIDs() const{
+std::vector<G4int> DicomFileCT::GetMaterislIDs() const {
     std::vector<G4int> mateIDs;
     G4int fCompress = theFileMgr->GetCompression();
-    if( DicomFileMgr::verbose >= warningVerb ) G4cout << fLocation << " DumpMateIDsToTextFile "
-                                                      << fFileName << " " << fMateIDs.size() << G4endl;
-    for( int ir = 0; ir < fNoVoxelsY/fCompress; ir++ ) {
-        for( int ic = 0; ic < fNoVoxelsX/fCompress; ic++ ) {
-            mateIDs.emplace_back(fMateIDs[ic+ir*fNoVoxelsX/fCompress]);
+    if (DicomFileMgr::verbose >= warningVerb)
+        G4cout << fLocation << " DumpMateIDsToTextFile " << fFileName << " " << fMateIDs.size() << G4endl;
+    for (int ir = 0; ir < fNoVoxelsY / fCompress; ir++) {
+        for (int ic = 0; ic < fNoVoxelsX / fCompress; ic++) {
+            mateIDs.emplace_back(fMateIDs[ic + ir * fNoVoxelsX / fCompress]);
         }
     }
     return mateIDs;

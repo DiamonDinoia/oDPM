@@ -25,19 +25,18 @@
 //
 #include "DicomFileMgr.hh"
 
-
 std::vector<G4String> DicomFileMgr::getMaterials() const {
     std::vector<G4String> materials;
-    for(const auto& [key, value] : theMaterials) {
-       materials.emplace_back(value);
+    for (const auto& [key, value] : theMaterials) {
+        materials.emplace_back(value);
     }
     return materials;
 }
 
 const std::vector<const DicomFileCT*> DicomFileMgr::getCTs() const {
     std::vector<const DicomFileCT*> cts;
-    for(const auto& [key, value] : theCTFiles) {
-       cts.emplace_back(value);
+    for (const auto& [key, value] : theCTFiles) {
+        cts.emplace_back(value);
     }
     return cts;
 }
