@@ -25,11 +25,11 @@
 //
 #ifndef DicomFileMgr__HH
 #define DicomFileMgr__HH
-#include <map>
 #include <vector>
+#include <map>
+#include "globals.hh"
 
 #include "dcmtk/dcmdata/dcfilefo.h"
-#include "globals.hh"
 class DicomVFile;
 class DicomFileCT;
 class DicomFileStructure;
@@ -37,78 +37,96 @@ class DicomFilePlan;
 class DicomFilePET;
 class DcmDataset;
 
-// typedef std::multimap<OFString,DicomVFile*> msd;
-typedef std::map<G4double, DicomFileCT*> mdct;
-typedef std::map<G4double, DicomFilePET*> mdpet;
-enum VerbLevel { silentVerb = -1, errorVerb = 0, warningVerb = 1, infoVerb = 2, debugVerb = 3, testVerb = 4 };
+//typedef std::multimap<OFString,DicomVFile*> msd;
+typedef std::map<G4double,DicomFileCT*> mdct;
+typedef std::map<G4double,DicomFilePET*> mdpet;
+enum VerbLevel {silentVerb = -1, errorVerb = 0, warningVerb = 1, infoVerb=2, debugVerb=3, 
+ testVerb=4};
 
-class DicomFileMgr {
-   public:
-    static DicomFileMgr* GetInstance();
-    ~DicomFileMgr(){};
+class DicomFileMgr 
+{
+public:
+  static DicomFileMgr* GetInstance();
+  ~DicomFileMgr(){};
 
-   private:
-    DicomFileMgr();
+private:
+  DicomFileMgr();
 
-   public:
-    std::vector<DicomFileStructure*> GetStructFiles() const { return theStructFiles; }
+public:
+  std::vector<DicomFileStructure*> GetStructFiles() const {
+    return theStructFiles;
+  }
 
-    void SetCompression(const G4String& fComp);
-    void AddFile(const G4String& fComp);
-    void AddMaterial(std::vector<G4String> data);
-    void AddMaterialDensity(std::vector<G4String> data);
-    void AddCT2Density(std::vector<G4String> data);
+  void SetCompression( G4String fComp );
+  void AddFile( G4String fComp );
+  void AddMaterial( std::vector<G4String> data );
+  void AddMaterialDensity( std::vector<G4String> data );
+  void AddCT2Density( std::vector<G4String> data );
 
-    void Convert(const G4String& fFileName);
-    static void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh);
-    void ProcessFiles();
-    void CheckCTSlices();
-    G4double Hounsfield2density(Uint32 Hval);
-    size_t GetMaterialIndex(G4double Hval);
-    size_t GetMaterialIndexByDensity(G4double density);
-    void BuildCTMaterials();
-    void MergeCTFiles();
-    void CheckPETSlices();
-    void BuildPETActivities();
-    void MergePETFiles();
-    void DumpToTextFile();
-    void SetStructureNCheck(G4int nsc) { theStructureNCheck = nsc; }
-    G4int GetStructureNCheck() const { return theStructureNCheck; }
-    void SetStructureNMaxROI(G4int nsc) { theStructureNMaxROI = nsc; }
-    G4int GetStructureNMaxROI() const { return theStructureNMaxROI; }
-    G4int GetCompression() const { return fCompression; }
-    G4String GetFileOutName() const { return theFileOutName; }
+  void Convert( G4String fFileName );
+  void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh );
+  void ProcessFiles();
+  void CheckCTSlices();
+  G4double Hounsfield2density(Uint32 Hval);
+  size_t GetMaterialIndex( G4double Hval );
+  size_t GetMaterialIndexByDensity( G4double density );
+  void BuildCTMaterials();
+  void MergeCTFiles();
+  void CheckPETSlices();
+  void BuildPETActivities();
+  void MergePETFiles();
+  void DumpToTextFile();
+  void SetStructureNCheck( G4int nsc ){
+    theStructureNCheck = nsc;
+  }
+  G4int GetStructureNCheck() const {
+    return theStructureNCheck;
+  }
+  void SetStructureNMaxROI( G4int nsc ){
+    theStructureNMaxROI = nsc;
+  }
+  G4int GetStructureNMaxROI() const {
+    return theStructureNMaxROI;
+  }
+  G4int GetCompression() const {
+    return fCompression;
+  }
+  G4String GetFileOutName() const {
+    return theFileOutName;
+  }
 
-    void SetControlPointMetersets();
-    G4bool IsMaterialsDensity() const { return bMaterialsDensity; }
+  void SetControlPointMetersets();
+  G4bool IsMaterialsDensity() const {
+    return bMaterialsDensity;
+  }
 
-    std::vector<G4String> getMaterials() const;
-    const std::vector<const DicomFileCT*> getCTs() const;
+std::vector<G4String> getMaterials() const;
+const std::vector<const DicomFileCT*> getCTs() const;
 
-   protected:
-    G4int fCompression;
+protected:
+  G4int fCompression;
 
-   private:
-    static DicomFileMgr* theInstance;
+private:
+  static DicomFileMgr* theInstance;
 
-    G4String theFileOutName;
-    //  msd theFiles;
-    mdct theCTFiles;
-    std::vector<DicomFileStructure*> theStructFiles;
-    std::vector<DicomFilePlan*> thePlanFiles;
-    mdpet thePETFiles;
-    std::map<G4double, G4String> theMaterials;
-    std::map<G4double, G4String> theMaterialsDensity;
-    std::map<G4int, G4double> theCT2Density;
+  G4String theFileOutName;
+  //  msd theFiles;
+  mdct theCTFiles;
+  std::vector<DicomFileStructure*> theStructFiles;
+  std::vector<DicomFilePlan*> thePlanFiles;
+  mdpet thePETFiles;
+  std::map<G4double,G4String> theMaterials;
+  std::map<G4double,G4String> theMaterialsDensity;
+  std::map<G4int,G4double> theCT2Density;
 
-    DicomFileCT* theCTFileAll;
-    DicomFilePET* thePETFileAll;
-    G4int theStructureNCheck{};
-    G4int theStructureNMaxROI{};
+  DicomFileCT* theCTFileAll;
+  DicomFilePET* thePETFileAll;
+  G4int theStructureNCheck;
+  G4int theStructureNMaxROI;
 
-   public:
-    static G4int verbose;
-    G4bool bMaterialsDensity{};
+public:
+  static G4int verbose;
+  G4bool bMaterialsDensity;
 };
 
 #endif

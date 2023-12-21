@@ -30,7 +30,7 @@ cmake.args = ['-DCMAKE_C_COMPILER:STRING=/usr/bin/gcc-12',
 wheel.packages = ["python/pyodpm"]
 wheel.exclude = ["**.pyx"]
 # Setuptools-style build caching in a local directory
-build-dir = "build/{wheel_tag}"
+build-dir = "pip-build/{wheel_tag}"
 
 # Build stable ABI wheels for CPython 3.8+
 wheel.py-api = "cp38"

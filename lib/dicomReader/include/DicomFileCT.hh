@@ -28,25 +28,27 @@
 
 #include "DicomVFileImage.hh"
 
-class DicomFileCT : public DicomVFileImage {
-   public:
-    DicomFileCT();
-    DicomFileCT(DcmDataset* dset);
-    ~DicomFileCT(){};
+class DicomFileCT : public DicomVFileImage
+{ 
+public:
+  DicomFileCT();
+  DicomFileCT(DcmDataset* dset);
+  ~DicomFileCT(){};
 
-   public:
-    void BuildMaterials();
-    void DumpMateIDsToTextFile(std::ofstream& fout);
-    void DumpDensitiesToTextFile(std::ofstream& fout);
-    void BuildStructureIDs();
-    void DumpStructureIDsToTextFile(std::ofstream& fout);
-    std::vector<G4int> GetMaterislIDs() const;
+public:
+  void BuildMaterials();
+  void DumpMateIDsToTextFile(std::ofstream& fout);
+  void DumpDensitiesToTextFile(std::ofstream& fout);
+  void BuildStructureIDs();
+  void DumpStructureIDsToTextFile(std::ofstream& fout);
+  std::vector<G4int> GetMaterislIDs() const;
 
-   private:
-    std::vector<size_t> fMateIDs;
-    std::vector<G4double> fDensities;
-    std::vector<G4int> fStructure;
-    //  G4int* fStructure;
+private:
+  std::vector<size_t> fMateIDs;
+  std::vector<G4double> fDensities;
+  std::vector<G4int> fStructure;
+  //  G4int* fStructure;
+  
 };
 
 #endif

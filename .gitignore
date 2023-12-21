@@ -9,3 +9,4 @@ exp
 /.idea/
 /venv/
 /tmp/
+/pip-build/

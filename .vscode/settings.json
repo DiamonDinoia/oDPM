@@ -1,0 +1,9 @@
+{
+    "cmake.generator": "Ninja",
+    "cmake.configureSettings": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++-12",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc-12",
+
+    }
+}
