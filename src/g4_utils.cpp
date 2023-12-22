@@ -132,6 +132,7 @@ OpmcDicomActionInitialization::OpmcDicomActionInitialization(const int nThreads)
         fPrimaryGeneratorActions.emplace_back(new ODPMDicomPrimaryGeneratorAction);
     }
 }
+void OpmcDicomActionInitialization::BuildForMaster() const { SetUserAction(new ODPMDicomRunAction); }
 
 ODPMDicomFileMgr::ODPMDicomFileMgr()
     : instance(*DicomFileMgr::GetInstance()), fNoVoxelsX(), fNoVoxelsY(), fNoVoxelsZ(), fDimVox() {}
@@ -371,15 +372,35 @@ ThreeVector<real_type> getCenter(const OpmcDicomDetectorConstruction &theGeometr
     ThreeVector<real_type> origin{theGeometry.GetMinX(), theGeometry.GetMinY(), theGeometry.GetMinZ()};
     ThreeVector<real_type> end{theGeometry.GetMaxX(), theGeometry.GetMaxY(), theGeometry.GetMaxZ()};
 
+    ThreeVector<real_type> center{theGeometry.GetTranslation().x(), theGeometry.GetTranslation().y(),
+                                  theGeometry.GetTranslation().z()};
     std::cout << "dim = " << dim << std::endl;
     std::cout << "voxelSize = " << voxelSize << std::endl;
     std::cout << "origin = " << origin << std::endl;
     std::cout << "end = " << end << std::endl;
     std::cout << "Z = " << theGeometry.GetNoVoxelsZ() << std::endl;
-
-    auto center = dim - end;
-    center.z    = std::abs(origin.z);
+    center = dim * voxelSize * .5 - center;
+    //    center.z = abs(origin.z);
     std::cout << "center = " << center << std::endl;
     return center;
 }
+
+ThreeVector<real_type> getResolution(const OpmcDicomDetectorConstruction &theGeometry) {
+    return {theGeometry.GetVoxelHalfX() * 2, theGeometry.GetVoxelHalfY() * 2, theGeometry.GetVoxelHalfZ() * 2};
+}
+
+G4int OpmcDicomDetectorConstruction::GetNoVoxelsX() const { return fNoVoxelsX; }
+G4int OpmcDicomDetectorConstruction::GetNoVoxelsY() const { return fNoVoxelsY; }
+G4int OpmcDicomDetectorConstruction::GetNoVoxelsZ() const { return fNoVoxelsZ; }
+G4double OpmcDicomDetectorConstruction::GetVoxelHalfX() const { return fVoxelHalfDimX; }
+G4double OpmcDicomDetectorConstruction::GetVoxelHalfY() const { return fVoxelHalfDimY; }
+G4double OpmcDicomDetectorConstruction::GetVoxelHalfZ() const { return fVoxelHalfDimZ; }
+G4double OpmcDicomDetectorConstruction::GetMinX() const { return fMinX; }
+G4double OpmcDicomDetectorConstruction::GetMinY() const { return fMinY; }
+G4double OpmcDicomDetectorConstruction::GetMinZ() const { return fMinZ; }
+G4double OpmcDicomDetectorConstruction::GetMaxX() const { return fMaxX; }
+G4double OpmcDicomDetectorConstruction::GetMaxY() const { return fMaxY; }
+G4double OpmcDicomDetectorConstruction::GetMaxZ() const { return fMaxZ; }
+G4ThreeVector OpmcDicomDetectorConstruction::GetTranslation() const { return fContainer_phys->GetTranslation(); }
+
 }  // namespace opmc

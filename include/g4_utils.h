@@ -33,29 +33,44 @@ class OpmcDicomDetectorConstruction : public DicomNestedParamDetectorConstructio
    public:
     using DicomNestedParamDetectorConstruction::DicomNestedParamDetectorConstruction;
 
-    G4int GetNoVoxelsX() const { return fNoVoxelsX; };
+    G4int GetNoVoxelsX() const;
+    ;
 
-    G4int GetNoVoxelsY() const { return fNoVoxelsY; };
+    G4int GetNoVoxelsY() const;
+    ;
 
-    G4int GetNoVoxelsZ() const { return fNoVoxelsZ; };
+    G4int GetNoVoxelsZ() const;
+    ;
 
-    G4double GetVoxelHalfX() const { return fVoxelHalfDimX; };
+    G4double GetVoxelHalfX() const;
+    ;
 
-    G4double GetVoxelHalfY() const { return fVoxelHalfDimY; };
+    G4double GetVoxelHalfY() const;
+    ;
 
-    G4double GetVoxelHalfZ() const { return fVoxelHalfDimZ; };
+    G4double GetVoxelHalfZ() const;
+    ;
 
-    G4double GetMinX() const { return fMinX; };
+    G4double GetMinX() const;
+    ;
 
-    G4double GetMinY() const { return fMinY; };
+    G4double GetMinY() const;
+    ;
 
-    G4double GetMinZ() const { return fMinZ; };
+    G4double GetMinZ() const;
+    ;
 
-    G4double GetMaxX() const { return fMaxX; };
+    G4double GetMaxX() const;
+    ;
 
-    G4double GetMaxY() const { return fMaxY; };
+    G4double GetMaxY() const;
+    ;
 
-    G4double GetMaxZ() const { return fMaxZ; };
+    G4double GetMaxZ() const;
+    ;
+
+    G4ThreeVector GetTranslation() const;
+    ;
 };
 
 class ODPMDicomRunAction : public DicomRunAction {
@@ -83,11 +98,11 @@ class ODPMDicomPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 
 class OpmcDicomActionInitialization : public DicomActionInitialization {
    public:
-    OpmcDicomActionInitialization(const int nThreads);
+    explicit OpmcDicomActionInitialization(int nThreads);
 
     void Build() const override;
 
-    void BuildForMaster() const override { SetUserAction(new ODPMDicomRunAction); }
+    void BuildForMaster() const override;
 
     void SetBeam(const G4String &particleName, G4ThreeVector position, G4ThreeVector direction, const double energy);
 
@@ -138,6 +153,9 @@ struct GammaResults {
 GammaResults validateDistributions(DoseDistribution<> reference_distribution, DoseDistribution<> opmc_distribution);
 
 ThreeVector<real_type> getCenter(const OpmcDicomDetectorConstruction &theGeometry);
+
+ThreeVector<real_type> getResolution(const OpmcDicomDetectorConstruction &theGeometry);
+
 }  // namespace opmc
 
 #endif  // ODPM_G4_UTILS_H

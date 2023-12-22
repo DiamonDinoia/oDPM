@@ -34,14 +34,6 @@ class Random {
 
     ODPM_INLINE constexpr real_type getExponential() noexcept { return -math::faster_logf(m_rng.Uniform()); }
 
-#ifndef __CUDA_ARCH__
-
-    inline real_type getSampled(std::uniform_real_distribution<real_type> &sampled) { return sampled(m_rng); }
-
-    inline unsigned getSampled(std::uniform_int_distribution<unsigned> &sampled) { return sampled(m_rng); }
-
-#endif
-
    private:
     MIXMAX::MixMaxRng17 m_rng;
 };

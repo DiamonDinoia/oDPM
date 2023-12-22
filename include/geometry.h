@@ -215,9 +215,9 @@ class HalfDistanceVoxelCube : public Geometry {
                        [max_value](const auto &value) { return value / *max_value; });
     }
 
-    constexpr auto &dimension() const { return m_dimensions; };
+    constexpr auto dimension() const { return m_dimensions; };
 
-    constexpr auto &resolution() const { return m_resolution; }
+    constexpr auto resolution() const { return m_resolution; }
 
     ODPM_INLINE constexpr void toGray() {
         constexpr auto gray_factor = 1. / 6241509343260.2;

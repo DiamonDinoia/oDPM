@@ -33,6 +33,7 @@ class G4Run {
     const DPMTables<G4String> *getTables() const;
 
     ThreeVector<double> center() const;
+    ThreeVector<double> resolution() const;
 
    private:
     void initializeGeometry();

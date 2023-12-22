@@ -28,6 +28,11 @@ NB_MODULE(pyodpm_ext, m) {
         .def_rw("x", &opmc::ThreeVector<int64_t>::x)
         .def_rw("y", &opmc::ThreeVector<int64_t>::y)
         .def_rw("z", &opmc::ThreeVector<int64_t>::z);
+    nb::class_<opmc::ThreeVector<unsigned long>>(m, "ThreeVector_u")
+        .def(nb::init<unsigned long, unsigned long, unsigned long>())
+        .def_rw("x", &opmc::ThreeVector<unsigned long>::x)
+        .def_rw("y", &opmc::ThreeVector<unsigned long>::y)
+        .def_rw("z", &opmc::ThreeVector<unsigned long>::z);
     nb::class_<OPMCG4Run>(m, "G4Run")
         .def(nb::init<std::array<G4long, 2>, const std::string &>())
         .def(nb::init<std::array<G4long, 2>, const std::string &, const std::string &>())
@@ -35,11 +40,15 @@ NB_MODULE(pyodpm_ext, m) {
         .def("initializeDicom", &OPMCG4Run::initializeDicom)
         .def("initializeWater", &OPMCG4Run::initializeWater)
         .def("convertGeometry", &OPMCG4Run::convertGeometry)
-        .def("center", &OPMCG4Run::center);
+        .def("center", &OPMCG4Run::center)
+        .def("resolution", &OPMCG4Run::resolution);
     nb::class_<opmc::VoxelCube>(m, "VoxelCube")
         .def("doseDepthDistribution", &opmc::VoxelCube::doseDepthDistribution)
         .def("doseDistribution", &opmc::VoxelCube::doseDistribution)
-        .def("resolution", &opmc::VoxelCube::resolution);
+        .def("resolution", &opmc::VoxelCube::resolution)
+        .def("dimension", &opmc::VoxelCube::dimension);
+    m.def("getDimension", [](const opmc::VoxelCube &cube) { return cube.dimension(); });
+    m.def("getResolution", [](const opmc::VoxelCube &cube) { return cube.resolution(); });
     nb::class_<opmc::ElectronPencilBeam>(m, "ElectronPencilBeam")
         .def(nb::init<opmc::ThreeVector<double>, opmc::ThreeVector<double>, double>());
     nb::class_<opmc::PhotonPencilBeam>(m, "PhotonPencilBeam")

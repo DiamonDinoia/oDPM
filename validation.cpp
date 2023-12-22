@@ -11,12 +11,10 @@ int main(int argc, char **argv) {
     std::array<G4long, 2> seeds{1, 2};
 
     opmc::G4Run g4Run(seeds, G4DATASET_DIR);
-    //    g4Run.initializeDicom("/home/mbarbone/repos/photonMonteCarlo/lung_ct/1-", 142);
-    g4Run.initializeWater(32, 32, 32, 1.);
-    //    g4Run.initializeGeometry();
-    g4Run.Run("e-", {1.5, 1.5, 1000}, {0, 0, 1}, 6 * CLHEP::MeV, static_cast<int>(1));
-    auto result                = g4Run.Run("e-", {0.5, 0.5, 0.001}, {0, 0, 1}, 6 * CLHEP::MeV, static_cast<int>(10e4));
+    g4Run.initializeDicom("/home/mbarbone/repos/photonMonteCarlo/lung_ct/1-", 142);
+//    g4Run.initializeWater(32, 32, 32, 1.);
     auto center                = g4Run.center();
+    auto result                = g4Run.Run("e-", {0, 0, -center.z}, {0, 0, 1}, 6 * CLHEP::MeV, static_cast<int>(10e4));
     auto doseDepthDistribution = result.doseDepthDistribution();
     //    auto doseDepthDistribution2 = result2.doseDepthDistribution();
     auto sum1 = std::accumulate(doseDepthDistribution.begin(), doseDepthDistribution.end(), 0.);
@@ -33,9 +31,9 @@ int main(int argc, char **argv) {
     auto voxelMap   = g4Run.convertGeometry();
     const auto seed = 42;
 
-    auto DPMRrun    = Run<HalfDistanceVoxelCube>(seed);
+    auto DPMRrun    = Run<VoxelCube>(seed);
 
-    ThreeVector<real_type> initialPosition{0, 0, -static_cast<double>(voxelMap.resolution().z) * 0.49};
+    ThreeVector<real_type> initialPosition{center.x, center.y, 0};
     constexpr ThreeVector<real_type> initialDirection{0, 0, 1};
     constexpr real_type initialEnergy = 6;
     auto beam                         = ElectronPencilBeam{initialPosition, initialDirection, initialEnergy};

@@ -58,14 +58,14 @@ void G4Run::initializeGeometry() {
     theFileMgr.Convert(inpfile);
     // Initialisation of physics, geometry, primary particles ...
     runManager->SetUserInitialization(theGeometry);
+    runManager->SetUserInitialization(theBeam);
     ThreeVector<real_type> voxelSize{theGeometry->GetVoxelHalfX(), theGeometry->GetVoxelHalfY(),
                                      theGeometry->GetVoxelHalfZ()};
     std::cout << " Voxel size in initializeGeometry: " << voxelSize << std::endl;
-    phys->SetCutValue(voxelSize.min() * .2, "gamma");
-    phys->SetCutValue(voxelSize.min() * .2, "e-");
-    phys->SetCutValue(voxelSize.min() * .2, "e+");
-    phys->SetCutValue(voxelSize.min() * .2, "proton");
-    runManager->SetUserInitialization(theBeam);
+    phys->SetCutValue(.1, "gamma");
+    phys->SetCutValue(.1, "e-");
+    phys->SetCutValue(.1, "e+");
+    phys->SetCutValue(.1, "proton");
     runManager->Initialize();
 }
 
@@ -119,5 +119,6 @@ VoxelCube G4Run::convertGeometry() { return convertGeometryToVoxelCube(*theGeome
 
 const DPMTables<G4String> *G4Run::getTables() const { return tables.get(); }
 ThreeVector<double> G4Run::center() const { return getCenter(*theGeometry); }
+ThreeVector<double> G4Run::resolution() const { return getResolution(*theGeometry); }
 
 }  // namespace opmc
